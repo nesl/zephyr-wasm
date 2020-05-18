@@ -46,7 +46,7 @@ MEMORY
   iram0_19_seg :                      	org = 0x40000400, len = 0x1FC00
   srom0_seg :                         	org = 0x50000000, len = 0x300
   srom1_seg :                         	org = 0x50000300, len = 0xFFFD00
-  sram0_seg :                         	org = 0x60000000, len = 0x100000
+  sram0_seg :                         	org = 0x60000000, len = 0x80000
 #ifdef CONFIG_GEN_ISR_TABLES
   IDT_LIST : org = 0x3ffbe000, len = 0x2000
 #endif
