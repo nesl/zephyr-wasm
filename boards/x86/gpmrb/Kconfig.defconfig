@@ -1,0 +1,19 @@
+# Copyright (c) 2019 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_GPMRB
+
+config MULTIBOOT
+	default n
+
+config BOARD
+	default "gpmrb"
+
+config BUILD_OUTPUT_STRIPPED
+	default y
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 19200000 if HPET_TIMER		# guess
+	default 1100000000 if LOAPIC_TIMER	# another guess
+
+endif # BOARD_GPMRB
