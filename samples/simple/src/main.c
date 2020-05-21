@@ -53,9 +53,77 @@ app_instance_main(wasm_module_inst_t module_inst)
 }
 
 static char global_heap_buf[CONFIG_GLOBAL_HEAP_BUF_SIZE] = { 0 };
+static char global_heap_buf2[CONFIG_GLOBAL_HEAP_BUF_SIZE] = { 0 };
+
+void iwasm_second(void *arg1, void *arg2, void *arg3) {
+  printf("\n\n\nAlso hello\n");
+
+  int start, end;
+  start = k_uptime_get_32();
+  uint8 *wasm_file_buf = NULL;
+  uint32 wasm_file_size = 0;
+  wasm_module_t wasm_module = NULL;
+  wasm_module_inst_t wasm_module_inst = NULL;
+  RuntimeInitArgs init_args;
+  char error_buf[128];
+
+  (void) arg1;
+  (void) arg2;
+  (void) arg3;
+
+  memset(&init_args, 0, sizeof(RuntimeInitArgs));
+
+  init_args.mem_alloc_type = Alloc_With_Pool;
+  init_args.mem_alloc_option.pool.heap_buf = global_heap_buf2;
+  init_args.mem_alloc_option.pool.heap_size = sizeof(global_heap_buf2);
+
+  /* initialize runtime environment */
+  if (!wasm_runtime_full_init(&init_args)) {
+      printf("Init runtime environment failed.\n");
+      return;
+  }
+
+  wasm_file_buf = (uint8*) wasm_test_file2;
+  wasm_file_size = sizeof(wasm_test_file2);
+
+  if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_file_size,
+                                        error_buf, sizeof(error_buf)))) {
+      printf("%s\n", error_buf);
+      goto fail1;
+  }
+  // while(1);
+  //
+  if (!(wasm_module_inst = wasm_runtime_instantiate(wasm_module,
+                                                    CONFIG_APP_STACK_SIZE,
+                                                    CONFIG_APP_HEAP_SIZE,
+                                                    error_buf,
+                                                    sizeof(error_buf)))) {
+      printf("%s\n", error_buf);
+      goto fail2;
+  }
+
+  /* invoke the main function */
+  app_instance_main(wasm_module_inst);
+
+  /* destroy the module instance */
+  wasm_runtime_deinstantiate(wasm_module_inst);
+
+fail2:
+  /* unload the module */
+  wasm_runtime_unload(wasm_module);
+
+fail1:
+  /* destroy runtime environment */
+  wasm_runtime_destroy();
+
+  end = k_uptime_get_32();
+
+  printf("thread2 elpase: %d\n", (end - start));
+}
 
 void iwasm_main(void *arg1, void *arg2, void *arg3)
 {
+    printf("Hello here.\n");
     int start, end;
     start = k_uptime_get_32();
     uint8 *wasm_file_buf = NULL;
@@ -133,18 +201,26 @@ fail1:
 #define MAIN_THREAD_PRIORITY 5
 
 K_THREAD_STACK_DEFINE(iwasm_main_thread_stack, MAIN_THREAD_STACK_SIZE);
+K_THREAD_STACK_DEFINE(iwasm_main2_thread_stack, MAIN_THREAD_STACK_SIZE);
 static struct k_thread iwasm_main_thread;
+static struct k_thread iwasm_main2_thread;
 
 bool iwasm_init(void)
 {
-    k_tid_t tid = k_thread_create(&iwasm_main_thread, iwasm_main_thread_stack,
+    k_thread_create(&iwasm_main_thread, iwasm_main_thread_stack,
                                   MAIN_THREAD_STACK_SIZE,
                                   iwasm_main, NULL, NULL, NULL,
                                   MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
-
-    return tid ? true : false;
+    // printf("first tid: %d\n", tid);
+    k_thread_create(&iwasm_main2_thread, iwasm_main2_thread_stack,
+                                  MAIN_THREAD_STACK_SIZE,
+                                  iwasm_second, NULL, NULL, NULL,
+                                  MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
+    // printf("Second tid: %d\n", tid);
+    return true;
 }
 void main(void)
 {
+    // create a main thread.
     iwasm_init();
 }

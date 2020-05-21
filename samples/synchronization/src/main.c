@@ -87,15 +87,17 @@ void threadA(void *dummy1, void *dummy2, void *dummy3)
 	ARG_UNUSED(dummy3);
 
 	/* spawn threadB */
-	k_tid_t tid = k_thread_create(&threadB_data, threadB_stack_area,
-			STACKSIZE, threadB, NULL, NULL, NULL,
-			PRIORITY, 0, K_NO_WAIT);
-
-	k_thread_name_set(tid, "thread_b");
+	// k_tid_t tid = k_thread_create(&threadB_data, threadB_stack_area,
+	// 		STACKSIZE, threadB, NULL, NULL, NULL,
+	// 		PRIORITY, 0, K_NO_WAIT);
+	//
+	// k_thread_name_set(tid, "thread_b");
 
 	/* invoke routine to ping-pong hello messages with threadB */
 	helloLoop(__func__, &threadA_sem, &threadB_sem);
 }
 
+K_THREAD_DEFINE(thread_b, STACKSIZE, threadB, NULL, NULL, NULL,
+		PRIORITY, 0, 0);
 K_THREAD_DEFINE(thread_a, STACKSIZE, threadA, NULL, NULL, NULL,
 		PRIORITY, 0, 0);
