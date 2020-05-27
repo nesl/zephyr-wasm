@@ -27,6 +27,17 @@
 static int app_argc;
 static char **app_argv;
 
+static NativeSymbol native_symbols[] =
+{
+  EXPORT_WASM_API_WITH_SIG(test_call_wasm_runtime_native, "()")
+  // {
+  //           "test_wasm_runtime_native_print", 		    // the name of WASM function name
+  //           test_wasm_runtime_native_print, 			// the native function pointer
+  //           "()",			// the function prototype signature, avoid to use i32
+  //           NULL                // attachment is NULL
+  // }
+};
+
 /**
  * Find the unique main function from a WASM module instance
  * and execute that function.
@@ -76,6 +87,10 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
   init_args.mem_alloc_type = Alloc_With_Pool;
   init_args.mem_alloc_option.pool.heap_buf = global_heap_buf2;
   init_args.mem_alloc_option.pool.heap_size = sizeof(global_heap_buf2);
+
+  init_args.native_module_name = "env";
+  init_args.n_native_symbols = sizeof(native_symbols) / sizeof(NativeSymbol);
+  init_args.native_symbols = native_symbols;
 
   /* initialize runtime environment */
   if (!wasm_runtime_full_init(&init_args)) {
