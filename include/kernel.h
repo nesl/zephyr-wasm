@@ -2023,6 +2023,12 @@ static inline s64_t k_uptime_get(void)
 	return k_ticks_to_ms_floor64(k_uptime_ticks());
 }
 
+// Get time in MICROSECONDS! I don't know why they don't provide it.
+static inline s64_t k_uptime_get_us(void)
+{
+	return k_ticks_to_us_floor64(k_uptime_ticks());
+}
+
 /**
  * @brief Enable clock always on in tickless kernel
  *
@@ -2081,6 +2087,12 @@ __deprecated static inline void k_disable_sys_clock_always_on(void)
 static inline u32_t k_uptime_get_32(void)
 {
 	return (u32_t)k_uptime_get();
+}
+
+// return uptime in microseconds.
+static inline u32_t k_uptime_get_32_us(void)
+{
+	return (u32_t)k_uptime_get_us();
 }
 
 /**
