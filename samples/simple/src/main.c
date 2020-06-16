@@ -117,6 +117,8 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       goto fail2;
   }
 
+  wasm_add_module_name(wasm_module_inst, "regular2");
+
   /* invoke the main function */
   app_instance_main(wasm_module_inst);
 
