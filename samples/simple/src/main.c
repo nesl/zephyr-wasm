@@ -29,13 +29,15 @@ static char **app_argv;
 
 static NativeSymbol native_symbols[] =
 {
-  EXPORT_WASM_API_WITH_SIG(test_call_wasm_runtime_native, "()")
+  EXPORT_WASM_API_WITH_SIG(test_call_wasm_runtime_native, "()"),
   // {
   //           "test_wasm_runtime_native_print", 		    // the name of WASM function name
   //           test_wasm_runtime_native_print, 			// the native function pointer
   //           "()",			// the function prototype signature, avoid to use i32
   //           NULL                // attachment is NULL
   // }
+  EXPORT_WASM_API_WITH_SIG(aerogel_sensor, "(*~*~)"),
+  EXPORT_WASM_API_WITH_SIG(aerogetl_actuator, "(*~)")
 };
 
 /**
@@ -117,7 +119,7 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       goto fail2;
   }
 
-  wasm_add_module_name(wasm_module_inst, "regular2");
+  wasm_add_module_name(wasm_module_inst, "regular1");
 
   /* invoke the main function */
   app_instance_main(wasm_module_inst);
