@@ -36,8 +36,8 @@ static NativeSymbol native_symbols[] =
   //           "()",			// the function prototype signature, avoid to use i32
   //           NULL                // attachment is NULL
   // }
-  EXPORT_WASM_API_WITH_SIG(aerogel_sensor, "(*~*~)"),
-  EXPORT_WASM_API_WITH_SIG(aerogetl_actuator, "(*~)")
+  EXPORT_WASM_API_WITH_SIG(aerogel_sensor_native, "(*~*~*~*~)"),
+  EXPORT_WASM_API_WITH_SIG(aerogetl_actuator_native, "(*~*~*~*~*~)")
 };
 
 /**
