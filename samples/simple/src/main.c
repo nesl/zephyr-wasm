@@ -100,8 +100,8 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       return;
   }
 
-  wasm_file_buf = (uint8*) wasm_test_file2;
-  wasm_file_size = sizeof(wasm_test_file2);
+  wasm_file_buf = (uint8*) wasm_test_actuator;
+  wasm_file_size = sizeof(wasm_test_actuator);
 
   if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_file_size,
                                         error_buf, sizeof(error_buf)))) {
@@ -119,7 +119,7 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       goto fail2;
   }
 
-  wasm_add_module_name(wasm_module_inst, "regular1");
+  wasm_add_module_name(wasm_module_inst, "regular2");
 
   /* invoke the main function */
   app_instance_main(wasm_module_inst);
@@ -137,7 +137,7 @@ fail1:
 
   end = k_uptime_get_32();
 
-  printf("thread2 elpase: %d\n", (end - start));
+  printf("thread2 elpase: %d ms\n", (end - start));
 }
 
 void iwasm_main(void *arg1, void *arg2, void *arg3)
