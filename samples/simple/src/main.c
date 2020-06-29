@@ -100,8 +100,8 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       return;
   }
 
-  wasm_file_buf = (uint8*) wasm_test_actuator;
-  wasm_file_size = sizeof(wasm_test_actuator);
+  wasm_file_buf = (uint8*) wasm_test_sensor;
+  wasm_file_size = sizeof(wasm_test_sensor);
 
   if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_file_size,
                                         error_buf, sizeof(error_buf)))) {
