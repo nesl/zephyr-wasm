@@ -37,7 +37,7 @@ static NativeSymbol native_symbols[] =
   //           NULL                // attachment is NULL
   // }
   EXPORT_WASM_API_WITH_SIG(aerogel_sensor_native, "(*~*~*~*~)"),
-  EXPORT_WASM_API_WITH_SIG(aerogetl_actuator_native, "(*~*~*~*~*~)")
+  EXPORT_WASM_API_WITH_SIG(aerogel_actuator_native, "(*~*~*~*~*~)")
 };
 
 /**
@@ -100,8 +100,8 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       return;
   }
 
-  wasm_file_buf = (uint8*) wasm_test_sensor;
-  wasm_file_size = sizeof(wasm_test_sensor);
+  wasm_file_buf = (uint8*) wasm_test_file2;
+  wasm_file_size = sizeof(wasm_test_file2);
 
   if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_file_size,
                                         error_buf, sizeof(error_buf)))) {

@@ -40,21 +40,33 @@ int main(int argc, char **argv)
   // int len_repetition = sizeof(uint32_t) * 3;
   // uint32_t latency[] = {70, 80, 90};
   // int len_latency = sizeof(uint32_t) * 3;
+  printf("======Regular-UAV2 starts======\n");
+  // char* sensor_name = "imu\tmotion\tcamera";
+  // int len_sensor_name_list = strlen(sensor_name) + 1;
+  //
+  // uint32_t frequency[] = {1000, 1500, 2000};
+  // int len_frequency = sizeof(uint32_t) * 3;
+  // uint32_t duration[] = {10000, 15000, 20000};
+  // int len_duration = sizeof(uint32_t) * 3;
+  // uint8* ret_list = malloc(1024);
+  // memset(ret_list, 0, 1024);
+  // int len_ret_list = 1024;
 
-  char* sensor_name = "imu\tmotion\tcamera";
+  char* sensor_name = "imu\tcamera";
   int len_sensor_name_list = strlen(sensor_name) + 1;
 
-  uint32_t frequency[] = {1000, 1500, 2000};
-  int len_frequency = sizeof(uint32_t) * 3;
-  uint32_t duration[] = {10000, 15000, 20000};
-  int len_duration = sizeof(uint32_t) * 3;
+  uint32_t frequency[] = {100, 60};
+  int len_frequency = sizeof(uint32_t) * 2;
+  uint32_t duration[] = {100000, 150000};
+  int len_duration = sizeof(uint32_t) * 2;
   uint8* ret_list = malloc(1024);
   memset(ret_list, 0, 1024);
   int len_ret_list = 1024;
 
-  printf("Hello Renju!2\n");
   aerogel_sensor_native((uint8*)sensor_name, len_sensor_name_list, (uint8*)frequency,
     len_frequency, (uint8*)duration, len_duration, (uint8*)ret_list, len_ret_list);
+
+  printf("======Regular-UAV2 ends======\n");
   // for(int i = 0; i < 50; i++) {
   //   printf("%u\n", ((uint32_t*)ret_list)[i]);
   // }
