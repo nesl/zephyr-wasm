@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
   uint32_t frequency[] = {100, 40, 30};
   int len_frequency = sizeof(uint32_t) * 3;
-  uint32_t duration[] = {100000, 150000, 20000};
+  uint32_t duration[] = {2000000, 2000000, 3000000};
   int len_duration = sizeof(uint32_t) * 3;
   uint8* ret_list = malloc(1024);
   memset(ret_list, 0, 1024);

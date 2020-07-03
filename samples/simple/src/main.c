@@ -68,20 +68,77 @@ app_instance_main(wasm_module_inst_t module_inst)
 static char global_heap_buf[CONFIG_GLOBAL_HEAP_BUF_SIZE] = { 0 };
 static char global_heap_buf2[CONFIG_GLOBAL_HEAP_BUF_SIZE] = { 0 };
 
-void iwasm_second(void *arg1, void *arg2, void *arg3) {
+uint8* get_wasm_binary_array(char* wasm_binary_array, uint32* length) {
+  uint32 index = 0;
+  for(; index < wasm_index_len; index++) {
+    if(!strcmp(wasm_binary_array, wasm_index[index])) {
+      break;
+    }
+  }
+
+  if(index >= wasm_index_len) {
+    printf("something wrong with the indexing.\n");
+    return 0;
+  }
+
+  switch(index) {
+    case 0:
+      length[0] = sizeof(wasm_max_access);
+      return (uint8*)wasm_max_access;
+    case 1:
+      length[0] = sizeof(wasm_regular_uav1);
+      return (uint8*)wasm_regular_uav1;
+    case 2:
+      length[0] = sizeof(wasm_shortage_mcu);
+      return (uint8*)wasm_shortage_mcu;
+    case 3:
+      length[0] = sizeof(wasm_regular_smarthome1);
+      return (uint8*)wasm_regular_smarthome1;
+    case 4:
+      length[0] = sizeof(wasm_shortage_camera_power);
+      return (uint8*)wasm_shortage_camera_power;
+    case 5:
+      length[0] = sizeof(wasm_regular_uav2);
+      return (uint8*)wasm_regular_uav2;
+    case 6:
+      length[0] = sizeof(wasm_regular_smarthome2);
+      return (uint8*)wasm_regular_smarthome2;
+    case 7:
+      length[0] = sizeof(wasm_init_access_denied);
+      return (uint8*)wasm_init_access_denied;
+    case 8:
+      length[0] = sizeof(wasm_shortage_memory);
+      return (uint8*)wasm_shortage_memory;
+    case 9:
+      length[0] = sizeof(wasm_test_sensor);
+      return (uint8*)wasm_test_sensor;
+    case 10:
+      length[0] = sizeof(wasm_test_actuator);
+      return (uint8*)wasm_test_actuator;
+    case 11:
+      length[0] = sizeof(wasm_test_file2);
+      return (uint8*)wasm_test_file2;
+    case 12:
+      length[0] = sizeof(wasm_test_file);
+      return (uint8*)wasm_test_file;
+  }
+  return 0;
+}
+
+void iwasm_second(void* wasm_binary_array, void* module_name, void *arg3) {
   printf("\n\n\nAlso hello\n");
 
   int start, end;
   start = k_uptime_get_32();
   uint8 *wasm_file_buf = NULL;
-  uint32 wasm_file_size = 0;
   wasm_module_t wasm_module = NULL;
   wasm_module_inst_t wasm_module_inst = NULL;
   RuntimeInitArgs init_args;
   char error_buf[128];
+  uint32 wasm_aerogel_file_size = 0;
 
-  (void) arg1;
-  (void) arg2;
+  // (void) arg1;
+  // (void) arg2;
   (void) arg3;
 
   memset(&init_args, 0, sizeof(RuntimeInitArgs));
@@ -100,10 +157,13 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       return;
   }
 
-  wasm_file_buf = (uint8*) wasm_test_file2;
-  wasm_file_size = sizeof(wasm_test_file2);
+  wasm_file_buf = get_wasm_binary_array((char*)wasm_binary_array, &wasm_aerogel_file_size);
+  // printf("array_length points to: %p\n", array_length);
+  printf("file buf info: %p\n", wasm_file_buf);
+  printf("actuator address: %p\n", wasm_test_actuator);
+  printf("file size: %d\n", wasm_aerogel_file_size);
 
-  if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_file_size,
+  if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_aerogel_file_size,
                                         error_buf, sizeof(error_buf)))) {
       printf("%s\n", error_buf);
       goto fail1;
@@ -119,7 +179,7 @@ void iwasm_second(void *arg1, void *arg2, void *arg3) {
       goto fail2;
   }
 
-  wasm_add_module_name(wasm_module_inst, "regular2");
+  wasm_add_module_name(wasm_module_inst, (char*)module_name);
 
   /* invoke the main function */
   app_instance_main(wasm_module_inst);
@@ -137,7 +197,7 @@ fail1:
 
   end = k_uptime_get_32();
 
-  printf("thread2 elpase: %d ms\n", (end - start));
+  printf("%s elpase: %d ms\n", (char*)module_name, (end - start));
 }
 
 void iwasm_main(void *arg1, void *arg2, void *arg3)
@@ -221,8 +281,10 @@ fail1:
 
 K_THREAD_STACK_DEFINE(iwasm_main_thread_stack, MAIN_THREAD_STACK_SIZE);
 K_THREAD_STACK_DEFINE(iwasm_main2_thread_stack, MAIN_THREAD_STACK_SIZE);
+K_THREAD_STACK_DEFINE(iwasm_main3_thread_stack, MAIN_THREAD_STACK_SIZE);
 static struct k_thread iwasm_main_thread;
 static struct k_thread iwasm_main2_thread;
+static struct k_thread iwasm_main3_thread;
 
 bool iwasm_init(void)
 {
@@ -231,11 +293,18 @@ bool iwasm_init(void)
                                   iwasm_main, NULL, NULL, NULL,
                                   MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
     // printf("first tid: %d\n", tid);
+
+    /* RENJU: DEFINED AS A GLOBAL VARIABLE*/
+    // wasm_aerogel_file_size = sizeof(wasm_test_file2);
     k_thread_create(&iwasm_main2_thread, iwasm_main2_thread_stack,
                                   MAIN_THREAD_STACK_SIZE,
-                                  iwasm_second, NULL, NULL, NULL,
+                                  iwasm_second, (void*)"wasm_test_sensor", (void*)"regular2", NULL,
                                   MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
     // printf("Second tid: %d\n", tid);
+    k_thread_create(&iwasm_main3_thread, iwasm_main3_thread_stack,
+                                  MAIN_THREAD_STACK_SIZE,
+                                  iwasm_second, "wasm_test_file2", (void*)"regular2", NULL,
+                                  MAIN_THREAD_PRIORITY, 0, K_MSEC(10000));
     return true;
 }
 void main(void)

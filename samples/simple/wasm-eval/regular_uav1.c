@@ -50,14 +50,14 @@ int main(int argc, char **argv)
 
   uint32_t frequency[] = {100, 60};
   int len_frequency = sizeof(uint32_t) * 2;
-  uint32_t duration[] = {100000, 150000};
+  uint32_t duration[] = {1000000, 4000000};
   int len_duration = sizeof(uint32_t) * 2;
   uint8* ret_list = malloc(1024);
   memset(ret_list, 0, 1024);
   int len_ret_list = 1024;
   aerogel_sensor_native((uint8*)sensor_name, len_sensor_name_list, (uint8*)frequency,
     len_frequency, (uint8*)duration, len_duration, (uint8*)ret_list, len_ret_list);
-  
+
   printf("======Regular-UAV1 ends======\n");
 
   return 0;
