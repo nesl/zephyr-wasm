@@ -159,9 +159,9 @@ void iwasm_second(void* wasm_binary_array, void* module_name, void *arg3) {
 
   wasm_file_buf = get_wasm_binary_array((char*)wasm_binary_array, &wasm_aerogel_file_size);
   // printf("array_length points to: %p\n", array_length);
-  printf("file buf info: %p\n", wasm_file_buf);
-  printf("actuator address: %p\n", wasm_test_actuator);
-  printf("file size: %d\n", wasm_aerogel_file_size);
+  // printf("file buf info: %p\n", wasm_file_buf);
+  // printf("actuator address: %p\n", wasm_test_actuator);
+  // printf("file size: %d\n", wasm_aerogel_file_size);
 
   if (!(wasm_module = wasm_runtime_load(wasm_file_buf, wasm_aerogel_file_size,
                                         error_buf, sizeof(error_buf)))) {
@@ -288,22 +288,22 @@ static struct k_thread iwasm_main3_thread;
 
 bool iwasm_init(void)
 {
-    k_thread_create(&iwasm_main_thread, iwasm_main_thread_stack,
-                                  MAIN_THREAD_STACK_SIZE,
-                                  iwasm_main, NULL, NULL, NULL,
-                                  MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
+    // k_thread_create(&iwasm_main_thread, iwasm_main_thread_stack,
+    //                               MAIN_THREAD_STACK_SIZE,
+    //                               iwasm_main, NULL, NULL, NULL,
+    //                               MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
     // printf("first tid: %d\n", tid);
 
     /* RENJU: DEFINED AS A GLOBAL VARIABLE*/
     // wasm_aerogel_file_size = sizeof(wasm_test_file2);
     k_thread_create(&iwasm_main2_thread, iwasm_main2_thread_stack,
                                   MAIN_THREAD_STACK_SIZE,
-                                  iwasm_second, (void*)"wasm_test_sensor", (void*)"regular2", NULL,
+                                  iwasm_second, (void*)"wasm_regular_uav1", (void*)"regular_uav1", NULL,
                                   MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
     // printf("Second tid: %d\n", tid);
     k_thread_create(&iwasm_main3_thread, iwasm_main3_thread_stack,
                                   MAIN_THREAD_STACK_SIZE,
-                                  iwasm_second, "wasm_test_file2", (void*)"regular2", NULL,
+                                  iwasm_second, "wasm_max_access", (void*)"max_con_access", NULL,
                                   MAIN_THREAD_PRIORITY, 0, K_MSEC(10000));
     return true;
 }
