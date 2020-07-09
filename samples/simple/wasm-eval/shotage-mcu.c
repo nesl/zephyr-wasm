@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 
   uint32_t frequency[] = {60};
   int len_frequency = sizeof(uint32_t) * 1;
-  uint32_t duration[] = {3000000};
+  uint32_t duration[] = {1000000};
   int len_duration = sizeof(uint32_t) * 1;
   uint8* ret_list = malloc(1024);
   memset(ret_list, 0, 1024);

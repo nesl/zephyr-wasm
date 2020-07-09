@@ -37,9 +37,9 @@ int main(int argc, char **argv)
   int len_val_list = sizeof(uint32_t) * 1;
   uint32_t len_val[] = {1};
   int len_len_val = sizeof(uint32_t) * 1;
-  uint32_t repetition[] = {90};
+  uint32_t repetition[] = {1000};
   int len_repetition = sizeof(uint32_t) * 1;
-  uint32_t latency[] = {20};
+  uint32_t latency[] = {1000};
   int len_latency = sizeof(uint32_t) * 1;
   aerogel_actuator_native((uint8*)actuator_name, len_actuator_name_list, (uint8*)val_list,
     len_val_list, (uint8*)len_val, len_len_val, (uint8*)repetition, len_repetition,
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
   uint32_t frequency[] = {100, 40, 30};
   int len_frequency = sizeof(uint32_t) * 3;
-  uint32_t duration[] = {2000000, 2000000, 3000000};
+  uint32_t duration[] = {1000000, 1000000, 1000000};
   int len_duration = sizeof(uint32_t) * 3;
   uint8* ret_list = malloc(1024);
   memset(ret_list, 0, 1024);

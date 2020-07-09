@@ -110,15 +110,30 @@ uint8* get_wasm_binary_array(char* wasm_binary_array, uint32* length) {
       length[0] = sizeof(wasm_shortage_memory);
       return (uint8*)wasm_shortage_memory;
     case 9:
+      length[0] = sizeof(wasm_regular_uav2_20hz);
+      return (uint8*)wasm_regular_uav2_20hz;
+    case 10:
+      length[0] = sizeof(wasm_regular_uav2_40hz);
+      return (uint8*)wasm_regular_uav2_40hz;
+    case 11:
+      length[0] = sizeof(wasm_regular_uav2_60hz);
+      return (uint8*)wasm_regular_uav2_60hz;
+    case 12:
+      length[0] = sizeof(wasm_regular_uav2_80hz);
+      return (uint8*)wasm_regular_uav2_80hz;
+    case 13:
+      length[0] = sizeof(wasm_regular_uav2_100hz);
+      return (uint8*)wasm_regular_uav2_100hz;
+    case 14:
       length[0] = sizeof(wasm_test_sensor);
       return (uint8*)wasm_test_sensor;
-    case 10:
+    case 15:
       length[0] = sizeof(wasm_test_actuator);
       return (uint8*)wasm_test_actuator;
-    case 11:
+    case 16:
       length[0] = sizeof(wasm_test_file2);
       return (uint8*)wasm_test_file2;
-    case 12:
+    case 17:
       length[0] = sizeof(wasm_test_file);
       return (uint8*)wasm_test_file;
   }
@@ -129,7 +144,7 @@ void iwasm_second(void* wasm_binary_array, void* module_name, void *arg3) {
   printf("\n\n\nAlso hello\n");
 
   int start, end;
-  start = k_uptime_get_32();
+  start = os_time_get_renju_boot_microsecond();
   uint8 *wasm_file_buf = NULL;
   wasm_module_t wasm_module = NULL;
   wasm_module_inst_t wasm_module_inst = NULL;
@@ -178,11 +193,16 @@ void iwasm_second(void* wasm_binary_array, void* module_name, void *arg3) {
       printf("%s\n", error_buf);
       goto fail2;
   }
-
   wasm_add_module_name(wasm_module_inst, (char*)module_name);
 
   /* invoke the main function */
+  // Real execution from here.
+  int exe_start, exe_end;
+  exe_start = k_uptime_get_32();
   app_instance_main(wasm_module_inst);
+  exe_end = k_uptime_get_32();
+  printf("\t%d\n", exe_end - exe_start);
+  printf("%s real execution time: %d ms\n", (char*)module_name, exe_end - exe_start);
 
   /* destroy the module instance */
   wasm_runtime_deinstantiate(wasm_module_inst);
@@ -195,9 +215,9 @@ fail1:
   /* destroy runtime environment */
   wasm_runtime_destroy();
 
-  end = k_uptime_get_32();
+  end = os_time_get_renju_boot_microsecond();
 
-  printf("%s elpase: %d ms\n", (char*)module_name, (end - start));
+  printf("%s elpase: %d ms\n", (char*)module_name, (end - start)/1000);
 }
 
 void iwasm_main(void *arg1, void *arg2, void *arg3)
@@ -296,14 +316,14 @@ bool iwasm_init(void)
 
     /* RENJU: DEFINED AS A GLOBAL VARIABLE*/
     // wasm_aerogel_file_size = sizeof(wasm_test_file2);
-    k_thread_create(&iwasm_main2_thread, iwasm_main2_thread_stack,
-                                  MAIN_THREAD_STACK_SIZE,
-                                  iwasm_second, (void*)"wasm_regular_uav1", (void*)"regular_uav1", NULL,
-                                  MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
+    // k_thread_create(&iwasm_main2_thread, iwasm_main2_thread_stack,
+    //                               MAIN_THREAD_STACK_SIZE,
+    //                               iwasm_second, (void*)"wasm_regular_uav1", (void*)"regular_uav1", NULL,
+    //                               MAIN_THREAD_PRIORITY, 0, K_NO_WAIT);
     // printf("Second tid: %d\n", tid);
     k_thread_create(&iwasm_main3_thread, iwasm_main3_thread_stack,
                                   MAIN_THREAD_STACK_SIZE,
-                                  iwasm_second, "wasm_max_access", (void*)"max_con_access", NULL,
+                                  iwasm_second, "wasm_init_access_denied", (void*)"init_access_denial", NULL,
                                   MAIN_THREAD_PRIORITY, 0, K_MSEC(10000));
     return true;
 }

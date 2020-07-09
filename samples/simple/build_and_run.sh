@@ -8,17 +8,19 @@ STM32_TARGET="stm32"
 QEMU_CORTEX_A53="qemu_cortex_a53"
 XTENSA_QEMU_TARGET="xtensa-qemu"
 ESP32_TARGET="esp32"
+NRF52840="nrf52840"
 
 usage ()
 {
         echo "USAGE:"
-        echo "$0 $X86_TARGET|$STM32_TARGET|$QEMU_CORTEX_A53|$XTENSA_QEMU_TARGET|$ESP32_TARGET"
+        echo "$0 $X86_TARGET|$STM32_TARGET|$QEMU_CORTEX_A53|$XTENSA_QEMU_TARGET|$NRF52840|$ESP32_TARGET"
         echo "Example:"
         echo "        $0 $X86_TARGET"
         echo "        $0 $STM32_TARGET"
         echo "        $0 $QEMU_CORTEX_A53"
         echo "        $0 $XTENSA_QEMU_TARGET"
         echo "        $0 $ESP32_TARGET"
+	echo "	      $0 $NRF52840"
         exit 1
 }
 
@@ -50,6 +52,13 @@ case $TARGET in
                            -DWAMR_BUILD_TARGET=XTENSA
                 west build -t run
                 ;;
+	$NRF52840)
+		west build -b nrf52840dk_nrf52840 \
+			   . -p always -- \
+			   -DCONF_FILE=prf_nrf52840_dk.conf \
+			   -DWAMR_BUILD_TARGET=THUMB
+		west flash
+		;;
         $ESP32_TARGET)
                 # suppose you have set environment variable ESP_IDF_PATH
                 west build -b esp32 \

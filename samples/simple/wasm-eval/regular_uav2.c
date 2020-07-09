@@ -52,12 +52,12 @@ int main(int argc, char **argv)
   // memset(ret_list, 0, 1024);
   // int len_ret_list = 1024;
 
-  char* sensor_name = "imu\tcamera";
+  char* sensor_name = "camera";
   int len_sensor_name_list = strlen(sensor_name) + 1;
 
-  uint32_t frequency[] = {100, 60};
+  uint32_t frequency[] = {60};
   int len_frequency = sizeof(uint32_t) * 2;
-  uint32_t duration[] = {2000000, 4000000};
+  uint32_t duration[] = {1000000};
   int len_duration = sizeof(uint32_t) * 2;
   uint8* ret_list = malloc(1024);
   memset(ret_list, 0, 1024);
